@@ -98,6 +98,7 @@ Protected Class Asteroid
 		    score = 100
 		  End Select
 		  
+		  explosion.Volume = 50
 		  explosion.Play
 		  Return score
 		End Function

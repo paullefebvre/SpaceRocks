@@ -22,9 +22,9 @@ Protected Class SpaceShip
 		  
 		  Var shipPath As New GraphicsPath
 		  shipPath.MoveToPoint(0, 0)
-		  shipPath.AddLineToPoint(40, 20)
-		  shipPath.AddLineToPoint(0, 40)
-		  shipPath.AddLineToPoint(10, 20)
+		  shipPath.AddLineToPoint(kSize, kSize / 2)
+		  shipPath.AddLineToPoint(0, kSize)
+		  shipPath.AddLineToPoint(kSize / 4, kSize / 2)
 		  shipPath.AddLineToPoint(0, 0)
 		  shipPic.Graphics.DrawPath(shipPath)
 		  
@@ -32,9 +32,9 @@ Protected Class SpaceShip
 		  // the thruster was used.
 		  If System.Ticks - ThrustAnimation < 10 Then
 		    Var thrustPath As New GraphicsPath
-		    thrustPath.MoveToPoint(5, 15)
-		    thrustPath.AddLineToPoint(0, 20)
-		    thrustPath.AddLineToPoint(5, 25)
+		    thrustPath.MoveToPoint(3, 8)
+		    thrustPath.AddLineToPoint(0, 10)
+		    thrustPath.AddLineToPoint(3, 13)
 		    shipPic.Graphics.DrawPath(thrustPath)
 		  End If
 		  
@@ -43,8 +43,8 @@ Protected Class SpaceShip
 		  Var s As New PixmapShape(shipPic)
 		  
 		  // Set the center of the image for rotation
-		  s.X = kSize \ 2
-		  s.Y = kSize \ 2
+		  s.X = s.Width / 2 'kSize \ 2
+		  s.Y = s.Height / 2 'kSize \ 2
 		  
 		  // Rotation is always specified in degrees, but vector
 		  // graphics need it converted to radians.
@@ -60,7 +60,7 @@ Protected Class SpaceShip
 		  // Create a missile in the center of the ship
 		  
 		  If System.Ticks - FireDelay > 10 Then
-		    Var m As New Missile(Self.X, Self.Y, Rotation)
+		    Var m As New Missile(Self.X - kSize / 2, Self.Y - kSize / 2, Rotation)
 		    FireDelay = System.Ticks
 		    Return m
 		  End If
@@ -195,7 +195,7 @@ Protected Class SpaceShip
 	#tag Constant, Name = kRotationDegrees, Type = Double, Dynamic = False, Default = \"10", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = kSize, Type = Double, Dynamic = False, Default = \"40", Scope = Private
+	#tag Constant, Name = kSize, Type = Double, Dynamic = False, Default = \"20", Scope = Private
 	#tag EndConstant
 
 

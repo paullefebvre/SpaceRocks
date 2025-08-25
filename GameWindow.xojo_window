@@ -11,7 +11,7 @@ Begin DesktopWindow GameWindow
    HasMaximizeButton=   True
    HasMinimizeButton=   True
    HasTitleBar     =   True
-   Height          =   600
+   Height          =   700
    ImplicitInstance=   True
    MacProcID       =   0
    MaximumHeight   =   32000
@@ -24,7 +24,7 @@ Begin DesktopWindow GameWindow
    Title           =   "Space Rocks"
    Type            =   0
    Visible         =   True
-   Width           =   800
+   Width           =   900
    Begin DesktopCanvas GameCanvas
       AllowAutoDeactivate=   True
       AllowFocus      =   False
@@ -32,7 +32,7 @@ Begin DesktopWindow GameWindow
       AllowTabs       =   False
       Backdrop        =   0
       Enabled         =   True
-      Height          =   554
+      Height          =   654
       Index           =   -2147483648
       InitialParent   =   ""
       Left            =   0
@@ -49,15 +49,15 @@ Begin DesktopWindow GameWindow
       Top             =   46
       Transparent     =   False
       Visible         =   True
-      Width           =   800
+      Width           =   900
    End
-   Begin Timer GameTimer
+   Begin Timer AsteroidTimer
       Enabled         =   True
       Index           =   -2147483648
       InitialParent   =   ""
       LockedInPosition=   False
       Mode            =   2
-      Period          =   10
+      Period          =   40
       Scope           =   0
       TabPanelIndex   =   0
    End
@@ -112,7 +112,7 @@ Begin DesktopWindow GameWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   350
+      Left            =   20
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -124,7 +124,7 @@ Begin DesktopWindow GameWindow
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "0"
+      Text            =   "Score: 0"
       TextAlignment   =   0
       TextColor       =   &c0000FF00
       Tooltip         =   ""
@@ -132,7 +132,7 @@ Begin DesktopWindow GameWindow
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   100
+      Width           =   134
    End
    Begin DesktopLabel LivesLabel
       AllowAutoDeactivate=   True
@@ -145,7 +145,80 @@ Begin DesktopWindow GameWindow
       Index           =   -2147483648
       InitialParent   =   ""
       Italic          =   False
-      Left            =   689
+      Left            =   736
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   False
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "Remaining Ships: 3"
+      TextAlignment   =   3
+      TextColor       =   &c0433FF00
+      Tooltip         =   ""
+      Top             =   14
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   144
+   End
+   Begin Timer ShipTimer
+      Enabled         =   True
+      Index           =   -2147483648
+      LockedInPosition=   False
+      Period          =   10
+      RunMode         =   2
+      Scope           =   0
+      TabPanelIndex   =   0
+   End
+   Begin DesktopLabel HighScoreLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   364
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   True
+      LockTop         =   True
+      Multiline       =   False
+      Scope           =   0
+      Selectable      =   False
+      TabIndex        =   3
+      TabPanelIndex   =   0
+      TabStop         =   True
+      Text            =   "High Score: 0"
+      TextAlignment   =   2
+      TextColor       =   &c0000FF00
+      Tooltip         =   ""
+      Top             =   14
+      Transparent     =   False
+      Underline       =   False
+      Visible         =   True
+      Width           =   171
+   End
+   Begin DesktopLabel LevelLabel
+      AllowAutoDeactivate=   True
+      Bold            =   False
+      Enabled         =   True
+      FontName        =   "System"
+      FontSize        =   0.0
+      FontUnit        =   0
+      Height          =   20
+      Index           =   -2147483648
+      Italic          =   False
+      Left            =   193
       LockBottom      =   False
       LockedInPosition=   False
       LockLeft        =   True
@@ -154,23 +227,33 @@ Begin DesktopWindow GameWindow
       Multiline       =   False
       Scope           =   0
       Selectable      =   False
-      TabIndex        =   2
+      TabIndex        =   4
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Lives: 3"
+      Text            =   "Level: 1"
       TextAlignment   =   0
-      TextColor       =   &c00000000
+      TextColor       =   &c0000FF00
       Tooltip         =   ""
       Top             =   14
       Transparent     =   False
       Underline       =   False
       Visible         =   True
-      Width           =   100
+      Width           =   134
    End
 End
 #tag EndDesktopWindow
 
 #tag WindowCode
+	#tag Event
+		Sub Closing()
+		  Var scoreFile As FolderItem = SpecialFolder.ApplicationData.Child("SpaceRocksHighScore.txt")
+		  
+		  Var output As TextOutputStream = TextOutputStream.Create(scoreFile)
+		  output.WriteLine(HighScore.ToString)
+		  output.Close
+		End Sub
+	#tag EndEvent
+
 	#tag Event
 		Function KeyDown(key As String) As Boolean
 		  Return True
@@ -180,6 +263,15 @@ End
 	#tag Event
 		Sub Opening()
 		  mInputManager = New GameInputManager
+		  
+		  Var scoreFile As FolderItem = SpecialFolder.ApplicationData.Child("SpaceRocksHighScore.txt")
+		  
+		  If scoreFile.Exists Then
+		    Var input As TextInputStream = TextInputStream.Open(scoreFile)
+		    Var hs As String = Input.ReadLine
+		    HighScore = Integer.FromString(hs)
+		    input.Close
+		  End If
 		  
 		  StartGame
 		  
@@ -243,7 +335,7 @@ End
 		  
 		  Var xPos As Integer
 		  Var yPos As Integer
-		  For i As Integer = 1 To 4
+		  For i As Integer = 1 To 4 + Level
 		    xPos = App.Randomizer.InRange(1, GameCanvas.Width)
 		    yPos = App.Randomizer.InRange(1, GameCanvas.Height \ 2)
 		    
@@ -270,6 +362,14 @@ End
 
 	#tag Property, Flags = &h0
 		Asteroids() As Asteroid
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		HighScore As Integer
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
+		Level As Integer = 1
 	#tag EndProperty
 
 	#tag Property, Flags = &h0
@@ -347,13 +447,17 @@ End
 		  Next
 		  
 		  If Lives <= 0 Then
+		    Const kGameOver = "Game Over"
 		    g.DrawingColor = &cffffff
-		    g.DrawText("Game Over", g.Width \ 2, g.Height \ 2)
+		    g.FontSize = 32
+		    Var goWidth As Integer = g.TextWidth(kGameOver)
+		    Var goHeight As Integer = g.TextHeight(kGameOver, 100)
+		    g.DrawText("Game Over", (g.Width - goWidth) \ 2, (g.Height - goHeight) \ 2)
 		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events GameTimer
+#tag Events AsteroidTimer
 	#tag Event
 		Sub Action()
 		  // Move all the asteroids and check if they've been hit
@@ -424,30 +528,6 @@ End
 		    End If
 		    
 		  Next
-		  
-		  
-		  For i As Integer = Missiles.LastIndex DownTo 0
-		    If Not Missiles(i).Move Then
-		      Missiles.RemoveAt(i)
-		    End If
-		  Next
-		  
-		  If Ship <> Nil Then
-		    Ship.Move
-		    
-		    // Ship wraps around edges
-		    If Ship.X > GameCanvas.Width Then Ship.X = 1
-		    If Ship.X < 1 Then Ship.X = GameCanvas.Width
-		    If Ship.Y > GameCanvas.Height Then Ship.Y = 1
-		    If Ship.Y < 1 Then Ship.Y = GameCanvas.Height
-		  End If
-		  
-		  ScoreLabel.Text = Str(Score)
-		  LivesLabel.Text = "Lives: " + Str(Lives)
-		  
-		  If Asteroids.LastIndex < 0 Then
-		    GenerateAsteroids
-		  End If
 		End Sub
 	#tag EndEvent
 #tag EndEvents
@@ -455,8 +535,10 @@ End
 	#tag Event
 		Sub Action()
 		  If LowSound Then
+		    asteroids_tonelo.Volume = 100
 		    asteroids_tonelo.Play
 		  Else
+		    asteroids_tonehi.Volume = 100
 		    asteroids_tonehi.Play
 		  End If
 		  
@@ -476,24 +558,32 @@ End
 #tag Events KeyboardTimer
 	#tag Event
 		Sub Action()
+		  If Keyboard.AsyncKeyDown(&h12) Then
+		    // Press "1" to start a new game
+		    StartGame
+		    Return
+		  End If
+		  
 		  If Ship Is Nil Then Return
 		  
 		  // Process keys
 		  If Keyboard.AsyncKeyDown(&h7B) Then
-		    //do something with the left arrow key
+		    // Left arrow key
 		    Ship.RotateLeft
 		  End If
 		  If Keyboard.AsyncKeyDown(&h7C) Then
-		    //do something with the right arrow key
+		    // Right arrow key
 		    Ship.RotateRight
 		  End If
 		  
-		  If Keyboard.AsyncKeyDown(&h31) Or Keyboard.AsyncControlKey Then
+		  If Keyboard.AsyncKeyDown(&h31) Or Keyboard.AsyncCommandKey Or Keyboard.AsyncShiftKey Then
+		    // Space or Command or Shift keys
 		    Var m As Missile = Ship.Fire
 		    If m <> Nil Then Missiles.Add(m)
 		  End If
 		  
 		  If Keyboard.AsyncKeyDown(&h7E) Then
+		    // Up arrow key
 		    Ship.Thruster
 		    Return
 		  End If
@@ -505,6 +595,52 @@ End
 		Sub Action()
 		  GameCanvas.Refresh(False)
 		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events ShipTimer
+	#tag Event
+		Sub Action()
+		  // Move the ship and its missiles.
+		  
+		  // Move missiles
+		  For i As Integer = Missiles.LastIndex DownTo 0
+		    If Not Missiles(i).Move Then
+		      Missiles.RemoveAt(i)
+		    End If
+		  Next
+		  
+		  // Move the ship
+		  If Ship <> Nil Then
+		    Ship.Move
+		    
+		    // Ship wraps around edges
+		    If Ship.X > GameCanvas.Width Then Ship.X = 1
+		    If Ship.X < 1 Then Ship.X = GameCanvas.Width
+		    If Ship.Y > GameCanvas.Height Then Ship.Y = 1
+		    If Ship.Y < 1 Then Ship.Y = GameCanvas.Height
+		  End If
+		  
+		  ScoreLabel.Text = "Score: " + Score.ToString
+		  
+		  If Score > HighScore Then
+		    HighScore = Score
+		  End If
+		  
+		  HighScoreLabel.Text = "High Score: " + HighScore.ToString
+		  LivesLabel.Text = "Remaining Ships: " + Lives.ToString
+		  
+		  If Asteroids.LastIndex < 0 Then
+		    // Cleared the screen, so generate more asteroids
+		    // and increase their speed.
+		    
+		    Level = Level + 1
+		    AsteroidTimer.Period = Max(AsteroidTimer.Period - 5, 5)
+		    
+		    GenerateAsteroids
+		  End If
+		  
+		  LevelLabel.Text = "Level: " + Level.ToString
 		End Sub
 	#tag EndEvent
 #tag EndEvents
