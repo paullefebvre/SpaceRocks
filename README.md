@@ -8,7 +8,7 @@ Use the left/right arrow keys to spin the ship, the up arrow to active thrusters
 
 Press "1" at any time to start a new game.
 
-== 1.2.0, August 25, 2025 ==
+## 1.2.0, August 25, 2025
 * Smaller ship to better match proportions of the rocks.
 * Improved 'heartbeat' sound.
 * High Score is saved and restored.
@@ -16,7 +16,7 @@ Press "1" at any time to start a new game.
 * Fire is now Command or Shift key.
 * Press "1" to start a new game.
 
-== Ideas for Future Versions ==
+## Ideas for Future Versions
 
 * Add UFO.
 * Add special feature for down arrow (hyperspace or shields).
