@@ -23,3 +23,6 @@ Press "1" at any time to start a new game.
 * High Score screen with names.
 * 2-player game.
 * After ship is destroyed wait until there is enough empty space before throwing it into the fray.
+
+
+<img width="2024" height="1680" alt="SpaceRocks" src="https://github.com/user-attachments/assets/d3c629d7-55b0-4b8d-b1fa-966a6b0e4fc9" />
